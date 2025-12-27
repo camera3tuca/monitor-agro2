@@ -56,13 +56,29 @@ st.markdown("""
 
 # Inicialização
 @st.cache_resource
+# Inicialização
+@st.cache_resource
 def init_system():
     """Inicializa o sistema (cache para performance)"""
-    return AgroMonitoringSystem(
-        finnhub_key=st.secrets["FINNHUB_API_KEY"],
-        news_api_key=st.secrets["NEWS_API_KEY"],
-        brapi_token=st.secrets["BRAPI_API_TOKEN"]
-    )
+    try:
+        # Tenta pegar as chaves do secrets
+        finnhub_key = st.secrets.get("FINNHUB_API_KEY", "")
+        news_api_key = st.secrets.get("NEWS_API_KEY", "")
+        brapi_token = st.secrets.get("BRAPI_API_TOKEN", "")
+        
+        return AgroMonitoringSystem(
+            finnhub_key=finnhub_key,
+            news_api_key=news_api_key,
+            brapi_token=brapi_token
+        )
+    except Exception as e:
+        st.error(f"Erro ao inicializar sistema: {e}")
+        # Retorna com chaves vazias como fallback
+        return AgroMonitoringSystem(
+            finnhub_key="",
+            news_api_key="",
+            brapi_token=""
+        )
 
 # Header
 st.markdown('<h1 class="main-header">🌾 Agro Monitor Pro</h1>', unsafe_allow_html=True)
